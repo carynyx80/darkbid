@@ -4,14 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import Script from "next/script";
 import { PublicKey } from "@solana/web3.js";
 import { getAccount, getAssociatedTokenAddressSync } from "@solana/spl-token";
-import Logo from "./Logo";
+import { useWallets } from "./app/WalletProvider";
 import {
   buildTx,
   chainTime,
   claimIx,
   claimRecord,
   connectionFor,
-  connectSolanaWallet,
   contributeIx,
   decodeSale,
   eligibilityRecord,
@@ -71,9 +70,8 @@ export default function SolanaSaleApp({ networkSwitch }) {
   const [config, setConfig] = useState(null);
   const [sale, setSale] = useState(null);
   const [loadError, setLoadError] = useState("");
-  const [wallet, setWallet] = useState(null);
-  const [walletError, setWalletError] = useState("");
-  const [connecting, setConnecting] = useState(false);
+  const { solana: wallet, connectSolana: onConnect, busy } = useWallets();
+  const connecting = busy.solana;
   const [relay, setRelay] = useState({ enabled: false });
   const [tab, setTab] = useState("identity");
 
@@ -128,17 +126,6 @@ export default function SolanaSaleApp({ networkSwitch }) {
     return () => clearInterval(t);
   }, [config, sale?.phase, refresh]);
 
-  async function onConnect() {
-    setWalletError("");
-    setConnecting(true);
-    try {
-      setWallet(await connectSolanaWallet(config, connectionFor(config)));
-    } catch (err) {
-      setWalletError(solanaErrorText(err));
-    }
-    setConnecting(false);
-  }
-
   async function onPrepare() {
     setBuyBusy(true);
     setPending(null);
@@ -181,7 +168,7 @@ export default function SolanaSaleApp({ networkSwitch }) {
       const connection = connectionFor(config);
       const ix = contributeIx(config, wallet.publicKey, pending.proof, pending.nullifierHash, pending.note.commitment);
       setBuyState({ kind: "info", text: "Confirm the payment in your wallet…" });
-      const sig = await wallet.send(await buildTx(connection, wallet.publicKey, ix));
+      const sig = await wallet.send(await buildTx(connection, wallet.publicKey, ix), connection);
       setBuyState({ kind: "done", text: `Ticket bought. Keep your note safe and claim after the sale ends. Transaction ${short(sig)}.` });
       setPending(null);
       setSaved(false);
@@ -247,7 +234,7 @@ export default function SolanaSaleApp({ networkSwitch }) {
           relayer: ZERO_KEY,
           fee: 0n,
         });
-        sig = await wallet.send(await buildTx(connection, wallet.publicKey, ix));
+        sig = await wallet.send(await buildTx(connection, wallet.publicKey, ix), connection);
       }
       const ata = getAssociatedTokenAddressSync(sale.mint, new PublicKey(recipient), true);
       const balance = (await getAccount(connection, ata, "confirmed")).amount;
@@ -262,27 +249,10 @@ export default function SolanaSaleApp({ networkSwitch }) {
     setClaimBusy(false);
   }
 
-  const header = (
-    <header className="nav">
-      <div className="wrap nav-inner">
-        <a className="brand" href="/" aria-label="Darkbid home">
-          <Logo width={50} />
-          <span>Darkbid</span>
-        </a>
-        {config?.live && (
-          <button className="button-outline" onClick={onConnect} disabled={Boolean(wallet) || connecting}>
-            {wallet ? short(wallet.publicKey.toBase58()) : connecting ? "Connecting…" : "Connect wallet"}
-          </button>
-        )}
-      </div>
-    </header>
-  );
-
   if (!config) {
     return (
       <>
-        {header}
-        <main className="app wrap">
+        <main className="app">
           {networkSwitch}
           <p className="label">Loading…</p>
         </main>
@@ -293,8 +263,7 @@ export default function SolanaSaleApp({ networkSwitch }) {
   if (!config.live) {
     return (
       <>
-        {header}
-        <main className="app wrap">
+        <main className="app">
           {networkSwitch}
           <p className="label">Darkbid app / Solana</p>
           <h1 className="app-title">No Solana sale is live yet.</h1>
@@ -317,14 +286,12 @@ export default function SolanaSaleApp({ networkSwitch }) {
   return (
     <>
       <Script src="/zk/snarkjs.min.js" strategy="afterInteractive" />
-      {header}
-      <main className="app wrap">
+      <main className="app">
         {networkSwitch}
         <div className="section-head">
           <p className="label">{config.local ? "Solana / local demo validator" : "Solana"}</p>
           <h1 className="app-title">{config.name || "Private presale"}</h1>
         </div>
-        {walletError && <p className="app-status is-error">{walletError}</p>}
         {loadError && <p className="app-status is-error">{loadError}</p>}
 
         {sale && (

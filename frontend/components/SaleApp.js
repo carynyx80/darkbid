@@ -3,9 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import Script from "next/script";
 import { formatEther, formatUnits, isAddress, ZeroAddress } from "ethers";
-import Logo from "./Logo";
+import { useWallets } from "./app/WalletProvider";
 import {
-  connectWallet,
   errorText,
   fetchTicketCommitments,
   loadSaleConfig,
@@ -40,8 +39,7 @@ export default function SaleApp({ networkSwitch }) {
   const [config, setConfig] = useState(null);
   const [sale, setSale] = useState(null);
   const [loadError, setLoadError] = useState("");
-  const [wallet, setWallet] = useState(null);
-  const [walletError, setWalletError] = useState("");
+  const { evm: wallet, connectEvm: onConnect } = useWallets();
   const [relay, setRelay] = useState({ enabled: false });
   const [tab, setTab] = useState("identity");
 
@@ -116,15 +114,6 @@ export default function SaleApp({ networkSwitch }) {
       }
     })();
   }, [refresh]);
-
-  async function onConnect() {
-    setWalletError("");
-    try {
-      setWallet(await connectWallet(config));
-    } catch (err) {
-      setWalletError(errorText(err));
-    }
-  }
 
   // ---------- buy
   async function onPrepare() {
@@ -247,27 +236,10 @@ export default function SaleApp({ networkSwitch }) {
   }
 
   // ---------- render
-  const header = (
-    <header className="nav">
-      <div className="wrap nav-inner">
-        <a className="brand" href="/" aria-label="Darkbid home">
-          <Logo width={50} />
-          <span>Darkbid</span>
-        </a>
-        {config?.live && (
-          <button className="button-outline" onClick={onConnect} disabled={Boolean(wallet)}>
-            {wallet ? short(wallet.address) : "Connect wallet"}
-          </button>
-        )}
-      </div>
-    </header>
-  );
-
   if (!config) {
     return (
       <>
-        {header}
-        <main className="app wrap">
+        <main className="app">
           {networkSwitch}
           <p className="label">Loading…</p>
         </main>
@@ -278,8 +250,7 @@ export default function SaleApp({ networkSwitch }) {
   if (!config.live) {
     return (
       <>
-        {header}
-        <main className="app wrap">
+        <main className="app">
           {networkSwitch}
           <p className="label">Darkbid app</p>
           <h1 className="app-title">No Robinhood Chain sale is live yet.</h1>
@@ -303,14 +274,12 @@ export default function SaleApp({ networkSwitch }) {
   return (
     <>
       <Script src="/zk/snarkjs.min.js" strategy="afterInteractive" />
-      {header}
-      <main className="app wrap">
+      <main className="app">
           {networkSwitch}
         <div className="section-head">
           <p className="label">{config.local ? "Robinhood Chain / local demo chain" : `Robinhood Chain / chain ${config.chainId}`}</p>
           <h1 className="app-title">{config.name || "Private presale"}</h1>
         </div>
-        {walletError && <p className="app-status is-error">{walletError}</p>}
         {loadError && <p className="app-status is-error">{loadError}</p>}
 
         {sale && (

@@ -1,40 +1,15 @@
-// Darkbid waitlist API.
+// Darkbid API: waitlist, project registry, anonymous allowlist codes and claim relayers.
 const express = require("express");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
-const { Pool } = require("pg");
+const { createStore } = require("./db");
+const { createProjectsRouter } = require("./projects");
 const { createRelayRouter } = require("./relayer");
 const { createSolanaRelayRouter } = require("./solana-relayer");
 
 const PORT = process.env.PORT || 4000;
-const isProd = process.env.NODE_ENV === "production";
+const store = createStore();
 
-// ---------- storage
-let store;
-if (process.env.DATABASE_URL) {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  store = {
-    kind: "postgres",
-    init: () =>
-      pool.query(`CREATE TABLE IF NOT EXISTS waitlist (
-        id BIGSERIAL PRIMARY KEY,
-        email TEXT NOT NULL UNIQUE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-      )`),
-    add: (email) => pool.query("INSERT INTO waitlist (email) VALUES ($1) ON CONFLICT (email) DO NOTHING", [email]),
-    ping: () => pool.query("SELECT 1"),
-  };
-} else if (isProd) {
-  console.error("DATABASE_URL is required in production");
-  process.exit(1);
-} else {
-  // Local development only: sign-ups are lost when the process stops.
-  const emails = new Set();
-  console.warn("No DATABASE_URL set: using an in-memory waitlist (development only)");
-  store = { kind: "memory", init: async () => {}, add: async (e) => emails.add(e), ping: async () => {} };
-}
-
-// ---------- app
 const app = express();
 app.set("trust proxy", 1);
 app.disable("x-powered-by");
@@ -55,7 +30,22 @@ const originAllowed = (origin) => {
     return pattern.startsWith("*.") ? host.endsWith(pattern.slice(1)) : host === pattern;
   });
 };
-app.use(cors({ origin: (origin, cb) => cb(null, originAllowed(origin)), methods: ["GET", "POST"] }));
+app.use(
+  cors({
+    origin: (origin, cb) => cb(null, originAllowed(origin)),
+    methods: ["GET", "POST"],
+    exposedHeaders: [],
+  })
+);
+// Logos are loaded straight from the API by the site, so allow cross-origin image use.
+app.use((_req, res, next) => {
+  res.set("Cross-Origin-Resource-Policy", "cross-origin");
+  next();
+});
+
+// Projects carry a logo, so they get a larger body limit inside their own router.
+app.use("/projects", createProjectsRouter(store));
+
 app.use(express.json({ limit: "8kb" }));
 
 app.get("/", (_req, res) => res.json({ name: "darkbid-api", ok: true }));
@@ -78,7 +68,7 @@ app.post("/waitlist", waitlistLimiter, async (req, res) => {
     return res.status(400).json({ ok: false, error: "Enter a valid email address." });
   }
   try {
-    await store.add(email);
+    await store.addWaitlist(email);
     // Same answer whether or not the address was already on the list.
     res.json({ ok: true });
   } catch (err) {
@@ -93,6 +83,7 @@ app.use("/relay", createRelayRouter());
 app.use((_req, res) => res.status(404).json({ ok: false, error: "Not found" }));
 app.use((err, _req, res, _next) => {
   const status = err.status || 500;
+  if (status === 500) console.error("unhandled error:", err.message);
   res.status(status).json({ ok: false, error: status === 500 ? "Server error" : "Bad request" });
 });
 

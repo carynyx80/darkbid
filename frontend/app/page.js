@@ -48,6 +48,9 @@ export default function Home() {
             <a href="#networks">Networks</a>
           </nav>
           <div className="nav-actions">
+            <a className="nav-app" href="/app/register">
+              Host a launch
+            </a>
             <a className="nav-app" href="/app">
               Launch app
             </a>

@@ -10,7 +10,7 @@ const NETWORKS = [
 ];
 
 // Each network runs its own sales; nothing is bridged between them.
-export default function AppShell() {
+export default function SaleShell() {
   const [network, setNetwork] = useState(null);
 
   useEffect(() => {
