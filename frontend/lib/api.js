@@ -4,9 +4,10 @@ export const API = process.env.NEXT_PUBLIC_API_URL || "";
 async function request(path, options = {}) {
   let res;
   try {
+    // Only send a JSON content type when there is a body, so plain reads skip the CORS preflight.
     res = await fetch(`${API}${path}`, {
       ...options,
-      headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+      headers: { ...(options.body ? { "Content-Type": "application/json" } : {}), ...(options.headers || {}) },
     });
   } catch {
     throw new Error("Can’t reach Darkbid right now. Check your connection and try again.");

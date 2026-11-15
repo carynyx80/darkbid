@@ -63,6 +63,10 @@ function createPostgresStore(url) {
         logo_type TEXT NOT NULL,
         sale_address TEXT
       )`);
+      await pool.query(`CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )`);
       await pool.query(`CREATE TABLE IF NOT EXISTS allowlist_codes (
         project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
         commitment TEXT NOT NULL,
@@ -71,6 +75,12 @@ function createPostgresStore(url) {
       )`);
     },
     ping: () => pool.query("SELECT 1"),
+    async getSetting(key) {
+      const r = await pool.query("SELECT value FROM settings WHERE key = $1", [key]);
+      return r.rows[0] ? r.rows[0].value : null;
+    },
+    setSetting: (key, value) =>
+      pool.query("INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value", [key, value]),
 
     async createProject(p) {
       await pool.query(
@@ -126,6 +136,7 @@ function createPostgresStore(url) {
 
 function createMemoryStore() {
   const projects = new Map();
+  const settings = new Map();
   const codes = new Map();
   const publicRow = (p) => {
     const row = {};
@@ -137,6 +148,8 @@ function createMemoryStore() {
     kind: "memory",
     init: async () => console.warn("No DATABASE_URL set: using in-memory storage (development only)"),
     ping: async () => {},
+    getSetting: async (key) => (settings.has(key) ? settings.get(key) : null),
+    setSetting: async (key, value) => settings.set(key, value),
     createProject: async (p) => projects.set(p.id, { ...p, created_at: new Date().toISOString() }),
     listProjects: async ({ status, owner }) =>
       [...projects.values()]

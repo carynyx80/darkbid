@@ -173,7 +173,7 @@ function renderFeed(rows, site) {
   ].join("\n");
 }
 
-function createProjectsRouter(store) {
+function createProjectsRouter(store, { onRegistered } = {}) {
   const router = express.Router();
   const autoApprove = process.env.AUTO_APPROVE_PROJECTS === "true";
   const adminToken = process.env.ADMIN_TOKEN || "";
@@ -234,8 +234,11 @@ function createProjectsRouter(store) {
         return res.status(401).json({ ok: false, error: "Wallet signature is invalid or expired. Sign again." });
       }
       const id = crypto.randomBytes(6).toString("base64url");
-      await store.createProject({ id, status: autoApprove ? "approved" : "pending", ...clean, ...logo });
-      res.json({ ok: true, id, status: autoApprove ? "approved" : "pending" });
+      const record = { id, status: autoApprove ? "approved" : "pending", ...clean, ...logo };
+      await store.createProject(record);
+      res.json({ ok: true, id, status: record.status });
+      // Tell the admin (e.g. on Telegram) after replying, so the host never waits on it.
+      if (onRegistered) Promise.resolve(onRegistered(record)).catch((err) => console.error("registration hook failed:", err.message));
     } catch (err) {
       if (err.field) return res.status(400).json({ ok: false, error: err.message, field: err.field });
       console.error("project registration failed:", err.message);

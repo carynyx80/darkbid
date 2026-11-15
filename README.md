@@ -33,6 +33,16 @@ curl -X POST "$API/projects/<id>/status" -H "Authorization: Bearer $ADMIN_TOKEN"
 
 Use `"rejected"` to hide a project. Set `AUTO_APPROVE_PROJECTS=true` to skip review and list projects immediately.
 
+### Reviewing from Telegram
+
+Every new registration can be sent to Telegram with the logo, all details and Approve / Reject buttons:
+
+1. In Telegram, message @BotFather, send `/newbot` and copy the token it gives you.
+2. On the Railway backend, set `TELEGRAM_BOT_TOKEN` to that token (keep it secret).
+3. From the admin account (`@yieldcore1` by default, change with `TELEGRAM_ADMIN_USERNAME`), open your bot and send `/start`.
+
+After that, requests arrive in that chat; `/pending` lists anything waiting. Only the linked admin can press the buttons. To post into a channel or group instead, add the bot there as an admin and set `TELEGRAM_CHAT_ID` (for example `@yourchannel`). Investor activity is never sent to Telegram.
+
 ## Try the buy-and-claim app on a local chain
 
 ```bash

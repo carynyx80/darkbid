@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const { createStore } = require("./db");
 const { createProjectsRouter } = require("./projects");
+const { createTelegram } = require("./telegram");
 const { createRelayRouter } = require("./relayer");
 const { createSolanaRelayRouter } = require("./solana-relayer");
 
@@ -43,8 +44,12 @@ app.use((_req, res, next) => {
   next();
 });
 
+// New registrations are forwarded to the admin's Telegram for review (when configured).
+const telegram = createTelegram(store);
+app.use("/telegram", telegram.router());
+
 // Projects carry a logo, so they get a larger body limit inside their own router.
-app.use("/projects", createProjectsRouter(store));
+app.use("/projects", createProjectsRouter(store, { onRegistered: telegram.notifyRegistration }));
 
 app.use(express.json({ limit: "8kb" }));
 
@@ -71,7 +76,12 @@ app.use((err, _req, res, _next) => {
 
 store
   .init()
-  .then(() => app.listen(PORT, () => console.log(`darkbid-api listening on ${PORT} (${store.kind})`)))
+  .then(() =>
+    app.listen(PORT, () => {
+      console.log(`darkbid-api listening on ${PORT} (${store.kind})`);
+      telegram.start();
+    })
+  )
   .catch((err) => {
     console.error("startup failed:", err.message);
     process.exit(1);
