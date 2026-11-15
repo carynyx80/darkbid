@@ -31,6 +31,13 @@ function createPostgresStore(url) {
   return {
     kind: "postgres",
     async init() {
+      // The email waitlist was removed so investors never give Darkbid any data.
+      // Drop its table and everything in it; this is a no-op once it is gone.
+      const dropped = await pool.query("SELECT to_regclass('public.waitlist') IS NOT NULL AS present");
+      if (dropped.rows[0].present) {
+        await pool.query("DROP TABLE waitlist");
+        console.log("removed the old waitlist table");
+      }
       await pool.query(`CREATE TABLE IF NOT EXISTS projects (
         id TEXT PRIMARY KEY,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
