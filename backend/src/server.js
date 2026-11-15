@@ -4,6 +4,7 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const { Pool } = require("pg");
 const { createRelayRouter } = require("./relayer");
+const { createSolanaRelayRouter } = require("./solana-relayer");
 
 const PORT = process.env.PORT || 4000;
 const isProd = process.env.NODE_ENV === "production";
@@ -86,6 +87,7 @@ app.post("/waitlist", waitlistLimiter, async (req, res) => {
   }
 });
 
+app.use("/relay/solana", createSolanaRelayRouter());
 app.use("/relay", createRelayRouter());
 
 app.use((_req, res) => res.status(404).json({ ok: false, error: "Not found" }));

@@ -36,7 +36,7 @@ function Status({ state }) {
   );
 }
 
-export default function SaleApp() {
+export default function SaleApp({ networkSwitch }) {
   const [config, setConfig] = useState(null);
   const [sale, setSale] = useState(null);
   const [loadError, setLoadError] = useState("");
@@ -268,6 +268,7 @@ export default function SaleApp() {
       <>
         {header}
         <main className="app wrap">
+          {networkSwitch}
           <p className="label">Loading…</p>
         </main>
       </>
@@ -279,8 +280,9 @@ export default function SaleApp() {
       <>
         {header}
         <main className="app wrap">
+          {networkSwitch}
           <p className="label">Darkbid app</p>
-          <h1 className="app-title">No sale is live yet.</h1>
+          <h1 className="app-title">No Robinhood Chain sale is live yet.</h1>
           <p className="lede">
             This is where you will buy tickets and claim tokens once the first private sale opens. Join the waitlist to hear when it does.
           </p>
@@ -303,8 +305,9 @@ export default function SaleApp() {
       <Script src="/zk/snarkjs.min.js" strategy="afterInteractive" />
       {header}
       <main className="app wrap">
+          {networkSwitch}
         <div className="section-head">
-          <p className="label">{config.local ? "Local demo chain" : `Chain ${config.chainId}`}</p>
+          <p className="label">{config.local ? "Robinhood Chain / local demo chain" : `Robinhood Chain / chain ${config.chainId}`}</p>
           <h1 className="app-title">{config.name || "Private presale"}</h1>
         </div>
         {walletError && <p className="app-status is-error">{walletError}</p>}

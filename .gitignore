@@ -11,3 +11,4 @@ out/
 .claude/
 frontend/public/sale.local.json
 protocol/deployments/31337.json
+frontend/public/sale-solana.local.json

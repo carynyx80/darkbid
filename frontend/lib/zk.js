@@ -76,18 +76,19 @@ export function newNote(chainId, presale) {
     secret,
     commitment: poseidon2([nullifier, secret]),
     nullifierHash: poseidon1([nullifier]),
-    text: `darkbid-note-v1:${chainId}:${presale.toLowerCase()}:${hex(nullifier)}:${hex(secret)}`,
+    text: `darkbid-note-v1:${chainId}:${chainId === "solana" ? presale : presale.toLowerCase()}:${hex(nullifier)}:${hex(secret)}`,
   };
 }
 
 export function parseNote(text) {
-  const m = /^darkbid-note-v1:(\d+):(0x[0-9a-fA-F]{40}):(0x[0-9a-fA-F]+):(0x[0-9a-fA-F]+)$/.exec(text.trim());
+  const m = /^darkbid-note-v1:(\d+|solana):(0x[0-9a-fA-F]{40}|[1-9A-HJ-NP-Za-km-z]{32,44}):(0x[0-9a-fA-F]+):(0x[0-9a-fA-F]+)$/.exec(text.trim());
   if (!m) throw new Error("That is not a Darkbid ticket note.");
   const nullifier = BigInt(m[3]);
   const secret = BigInt(m[4]);
+  const isSolana = m[1] === "solana";
   return {
-    chainId: Number(m[1]),
-    presale: m[2].toLowerCase(),
+    chainId: isSolana ? "solana" : Number(m[1]),
+    presale: isSolana ? m[2] : m[2].toLowerCase(),
     nullifier,
     secret,
     commitment: poseidon2([nullifier, secret]),
@@ -102,16 +103,18 @@ async function snark() {
   return window.snarkjs;
 }
 
-async function prove(circuit, input) {
+// `format` is "evm" (Solidity calldata) or "raw" (snarkjs proof JSON, converted for Solana by lib/solana.js).
+async function prove(circuit, input, format = "evm") {
   const snarkjs = await snark();
   const stringified = JSON.parse(JSON.stringify(input, (_k, v) => (typeof v === "bigint" ? v.toString() : v)));
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(stringified, `/zk/${circuit}.wasm`, `/zk/${circuit}.zkey`);
+  if (format === "raw") return proof;
   const calldata = await snarkjs.groth16.exportSolidityCallData(proof, publicSignals);
   const [a, b, c] = JSON.parse(`[${calldata}]`);
   return { a, b, c };
 }
 
-export async function proveEligibility({ identity, allowlist, saleId, maxPerBuyer, ticketIndex, commitment }) {
+export async function proveEligibility({ identity, allowlist, saleId, maxPerBuyer, ticketIndex, commitment, format = "evm" }) {
   const tree = new MerkleTree(allowlist);
   const leafIndex = tree.leaves.findIndex((l) => l === identity.commitment);
   if (leafIndex < 0) throw new Error("This identity is not on the allowlist.");
@@ -127,11 +130,12 @@ export async function proveEligibility({ identity, allowlist, saleId, maxPerBuye
     ticketIndex: BigInt(ticketIndex),
     pathElements,
     pathIndices,
-  });
+  }, format);
   return { proof, nullifierHash };
 }
 
-export async function proveClaim({ note, commitments, recipient, relayer, fee }) {
+// For Solana pass `recipient` and `relayer` already converted to field elements.
+export async function proveClaim({ note, commitments, recipient, relayer, fee, format = "evm" }) {
   const tree = new MerkleTree(commitments);
   const leafIndex = tree.leaves.findIndex((l) => l === note.commitment);
   if (leafIndex < 0) throw new Error("This ticket was not found in the sale.");
@@ -147,6 +151,6 @@ export async function proveClaim({ note, commitments, recipient, relayer, fee })
     secret: note.secret,
     pathElements,
     pathIndices,
-  });
+  }, format);
   return { proof, root };
 }

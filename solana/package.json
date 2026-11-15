@@ -1,0 +1,17 @@
+{
+  "name": "darkbid-solana",
+  "private": true,
+  "scripts": {
+    "verifying-keys": "node scripts/verifying-keys.js",
+    "test": "anchor test"
+  },
+  "devDependencies": {
+    "@coral-xyz/anchor": "0.32.1",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.98.0",
+    "chai": "^4.5.0",
+    "mocha": "^10.8.0",
+    "poseidon-lite": "^0.3.0",
+    "snarkjs": "0.7.6"
+  }
+}

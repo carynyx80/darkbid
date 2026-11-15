@@ -1,0 +1,24 @@
+[package]
+name = "private_presale"
+version = "0.1.0"
+description = "Darkbid private presale for Solana"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "private_presale"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+
+[dependencies]
+anchor-lang = { version = "=0.32.2", features = ["init-if-needed"] }
+anchor-spl = "=0.32.2"
+groth16-solana = "=0.2.0"
+solana-poseidon = "2.3"
+bytemuck = { version = "1", features = ["derive", "min_const_generics"] }
