@@ -2022,3 +2022,431 @@ button:disabled {
   color: var(--gold);
   text-transform: uppercase;
 }
+
+/* =====================================================================
+   Playful theme: friendlier type, a coral accent, softer shapes, bounce.
+   Layered last so it overrides the earlier, more serious styling.
+   ===================================================================== */
+:root {
+  --pop: #ff8a6b;
+  --pop-deep: #f26a4b;
+  --pop-soft: rgba(255, 138, 107, 0.14);
+  --radius: 22px;
+  --radius-sm: 14px;
+}
+
+body {
+  background:
+    radial-gradient(900px 520px at 92% -8%, rgba(255, 138, 107, 0.12), transparent 60%),
+    radial-gradient(800px 480px at -10% 40%, rgba(230, 213, 164, 0.07), transparent 60%),
+    var(--black);
+  background-attachment: fixed;
+}
+
+.appframe {
+  background:
+    radial-gradient(900px 520px at 92% -8%, rgba(255, 138, 107, 0.12), transparent 60%),
+    radial-gradient(800px 480px at -10% 50%, rgba(230, 213, 164, 0.06), transparent 60%),
+    var(--black);
+}
+
+::selection {
+  background: var(--pop);
+  color: var(--black);
+}
+
+:focus-visible {
+  outline-color: var(--pop);
+}
+
+/* ---------- type: sentence case, rounder, a little bouncy */
+h1,
+h2,
+h3,
+.brand span,
+.role-title,
+.countdown-value,
+.project-logo-fallback {
+  font-family: var(--font-display), sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: -0.03em;
+}
+
+h1 {
+  line-height: 0.98;
+}
+
+h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.brand span {
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.label {
+  font-family: var(--font-body), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--pop);
+}
+
+.label-muted {
+  color: var(--muted);
+}
+
+.lede {
+  color: #efe4c4;
+}
+
+/* Coral scribble under a word */
+.scribble {
+  position: relative;
+  display: inline-block;
+  color: var(--pop);
+}
+
+.scribble::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: -0.08em;
+  height: 0.22em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M2 14 C 40 4, 70 18, 100 10 S 160 4, 198 12' fill='none' stroke='%23ff8a6b' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+}
+
+.sticker {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--pop);
+  color: var(--black);
+  font-size: 12px;
+  font-weight: 700;
+  transform: rotate(-4deg);
+}
+
+.step-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--pop-soft);
+  color: var(--pop);
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+/* ---------- buttons: pill-shaped, coral, springy */
+.button-solid,
+.waitlist-form button {
+  border-radius: 999px;
+  background: var(--pop);
+  color: var(--black);
+  box-shadow: 0 6px 0 -1px var(--pop-deep);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, background 0.2s ease;
+}
+
+.button-solid:hover {
+  background: #ff9b80;
+  transform: translateY(-2px) rotate(-1deg);
+  box-shadow: 0 8px 0 -1px var(--pop-deep);
+}
+
+.button-solid:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 -1px var(--pop-deep);
+}
+
+.button-solid:disabled {
+  transform: none;
+  box-shadow: none;
+}
+
+.button-ghost,
+.button-outline {
+  border-radius: 999px;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.button-ghost:hover,
+.button-outline:hover {
+  transform: translateY(-2px);
+}
+
+.button-outline {
+  border-color: var(--pop);
+  color: var(--pop);
+}
+
+.button-outline:hover {
+  background: var(--pop);
+  color: var(--black);
+}
+
+/* ---------- cards: rounder, they lift and tilt a touch */
+.card,
+.role-card,
+.project-card,
+.form-section,
+.card-plain,
+.side-card,
+.done-panel,
+.hosted-row,
+.steps-list,
+.stats,
+.empty,
+.project-hero {
+  border-radius: var(--radius);
+}
+
+.card,
+.project-card,
+.role-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover,
+.project-card:hover {
+  border-color: var(--pop);
+  transform: translateY(-4px) rotate(-0.4deg);
+  box-shadow: 0 18px 40px -20px rgba(255, 138, 107, 0.45);
+}
+
+.role-card:hover {
+  transform: translateY(-4px) rotate(-0.6deg);
+}
+
+.role-card-solid {
+  background: var(--pop);
+  border-color: var(--pop);
+}
+
+.role-card-solid:hover {
+  border-color: var(--pop);
+  transform: translateY(-4px) rotate(0.6deg);
+}
+
+.tag,
+.chip,
+.phase,
+.status,
+.identity-badge {
+  border-radius: 999px;
+}
+
+.tag-solid,
+.phase-live,
+.identity-badge {
+  background: var(--pop);
+  border-color: var(--pop);
+  color: var(--black);
+}
+
+.list-hidden li::before {
+  border-radius: 50%;
+  background: var(--pop);
+}
+
+.list-visible li::before {
+  border-radius: 50%;
+}
+
+/* ---------- inputs and toggles */
+.form-field input,
+.form-field textarea,
+.field textarea,
+.field input[type="text"],
+.field code,
+.waitlist-form input,
+.choice,
+.logo-drop,
+.host-wallet,
+.details,
+.countdown {
+  border-radius: var(--radius-sm);
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.field textarea:focus,
+.field input[type="text"]:focus {
+  border-color: var(--pop);
+  box-shadow: 0 0 0 4px var(--pop-soft);
+}
+
+.choice.is-active {
+  border-color: var(--pop);
+  box-shadow: inset 0 0 0 1px var(--pop);
+  background: var(--pop-soft);
+}
+
+.segmented button.is-active,
+.network-switch button.is-active,
+.watch-filter.is-active {
+  background: var(--pop);
+  border-color: var(--pop);
+  color: var(--black);
+}
+
+.network-switch {
+  border-radius: 999px;
+}
+
+.network-switch button {
+  border-radius: 999px;
+}
+
+.tabs button.is-active {
+  color: var(--pop);
+  border-bottom-color: var(--pop);
+}
+
+.step {
+  background: var(--pop-soft);
+  border-color: transparent;
+  color: var(--pop);
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+}
+
+.watch.is-on,
+.watch:hover {
+  color: var(--pop);
+  border-color: var(--pop);
+}
+
+.watch.is-on svg {
+  animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.6) rotate(-20deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+.wallet-btn.is-connected {
+  border-color: var(--pop);
+}
+
+.app-nav a.is-active {
+  background: var(--pop-soft);
+  color: var(--pop);
+}
+
+.app-status.is-done,
+.countdown.phase-live .countdown-value {
+  color: var(--pop);
+}
+
+.countdown.phase-live {
+  border-color: var(--pop);
+}
+
+.follow-note a,
+.footer-link,
+.nav-app:hover {
+  color: var(--pop);
+}
+
+/* ---------- the big logo bobs gently */
+.opening-mark svg {
+  animation: bob 6s ease-in-out infinite;
+  filter: drop-shadow(0 24px 40px rgba(255, 138, 107, 0.18));
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening-mark svg,
+  .watch.is-on svg {
+    animation: none;
+  }
+
+  .button-solid,
+  .button-ghost,
+  .button-outline,
+  .card,
+  .project-card,
+  .role-card {
+    transition: none;
+  }
+
+  .button-solid:hover,
+  .button-ghost:hover,
+  .button-outline:hover,
+  .card:hover,
+  .project-card:hover,
+  .role-card:hover {
+    transform: none;
+  }
+}
+
+/* Landing nav: keep it on one line; drop the section links when space runs out. */
+.nav-links a,
+.nav-actions a {
+  white-space: nowrap;
+}
+
+@media (max-width: 1000px) {
+  .nav-links {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .nav-app {
+    display: none;
+  }
+}
+
+/* Chips and badges: friendly sentence case instead of monospace capitals. */
+.phase,
+.tag,
+.status,
+.identity-badge,
+.details dt,
+.role-kicker {
+  font-family: var(--font-body), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.role-kicker {
+  font-size: 13px;
+  color: var(--pop);
+}
+
+.role-card-solid .role-kicker {
+  color: rgba(6, 6, 6, 0.65);
+}
+
+.details dt {
+  color: var(--pop);
+}

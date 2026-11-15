@@ -2,24 +2,24 @@ import Logo from "../components/Logo";
 import Reveal from "../components/Reveal";
 
 const steps = [
-  ["01", "Buy a ticket", "Prove you’re on the allowlist without saying who you are, then pay for identical tickets. Every ticket costs the same, so amounts say nothing."],
-  ["02", "The sale closes", "Claims stay locked until the sale ends. Every buyer is hidden among all the others before a single token moves."],
-  ["03", "Claim anywhere", "Redeem each ticket to any wallet you choose, through a relayer. Nothing on-chain ties it to the wallet that paid."],
+  ["1", "Grab a ticket", "Prove you’re on the list without saying who you are. Every ticket costs the same, so the amount gives nothing away."],
+  ["2", "Wait for the curtain", "Claims stay locked until the sale ends, so you’re lost in the crowd before a single token moves."],
+  ["3", "Claim anywhere", "Send your tokens to any wallet you like. Nothing on-chain links it back to the one that paid."],
 ];
 
-const hidden = ["Which allowlisted buyer bought", "Which wallet received which tokens", "How much any buyer holds afterwards"];
-const visible = ["That a wallet paid for a ticket", "How many tickets were sold in total", "The price and terms of the sale"];
+const hidden = ["Which allowlisted buyer bought", "Which wallet got which tokens", "How much anyone holds afterwards"];
+const visible = ["That some wallet paid for a ticket", "How many tickets sold in total", "The price and the rules of the sale"];
 
 const saleTypes = [
-  ["Presale", "First", "Fixed price, allowlisted, identical tickets."],
-  ["ICO", "Planned", "Sealed bids that clear at a single price."],
-  ["IDO", "Planned", "Private allocation, then straight into liquidity."],
-  ["IPO", "Planned", "Tokenized shares with a hidden cap table and an auditor key."],
+  ["Presale", "First up", "Fixed price, allowlisted, identical tickets."],
+  ["ICO", "Coming", "Sealed bids that all clear at one price."],
+  ["IDO", "Coming", "Private allocation, then straight into liquidity."],
+  ["IPO", "Coming", "Tokenized shares with a hidden cap table."],
 ];
 
 const networks = [
-  ["Robinhood Chain", "Sales run natively on Robinhood Chain. Payments, tickets and claims all stay there."],
-  ["Solana", "Sales run natively on Solana. Payments, tickets and claims all stay there."],
+  ["Robinhood Chain", "Sales live entirely on Robinhood Chain: pay, get a ticket, claim, all in one place."],
+  ["Solana", "Sales live entirely on Solana: pay, get a ticket, claim, all in one place."],
 ];
 
 function SectionHead({ label, title }) {
@@ -51,7 +51,7 @@ export default function Home() {
               Host a launch
             </a>
             <a className="button-outline" href="/app">
-              Launch app
+              Open the app
             </a>
           </div>
         </div>
@@ -62,13 +62,13 @@ export default function Home() {
           <div className="wrap opening-inner">
             <div className="opening-text">
               <Reveal as="p" className="label">
-                Private launchpad / Robinhood Chain / Solana
+                Private launchpad · Robinhood Chain · Solana
               </Reveal>
               <Reveal as="h1" delay={0.08}>
-                Raise in the dark.
+                Raise in the <span className="scribble">dark</span>.
               </Reveal>
               <Reveal as="p" delay={0.16} className="lede">
-                Darkbid runs token sales where nobody can link a buyer to their tokens. Not the public, not the issuer, not us.
+                Token sales where nobody can tell who bought what. Not the public, not the project, not even us.
               </Reveal>
               <Reveal delay={0.24} className="hero-ctas">
                 <a className="button-solid" href="/app">
@@ -79,7 +79,7 @@ export default function Home() {
                 </a>
               </Reveal>
               <Reveal as="p" delay={0.3} className="hero-note">
-                No sign-up, no email. Investors never give Darkbid anything.
+                <span className="sticker">psst</span> No sign-up. No email. Just you and some very fancy maths.
               </Reveal>
             </div>
             <Reveal delay={0.2} className="opening-mark">
@@ -90,11 +90,11 @@ export default function Home() {
 
         <section className="section" id="how">
           <div className="wrap">
-            <SectionHead label="How it works" title="Three steps. No trail." />
+            <SectionHead label="How it works" title="Three steps. Zero trail." />
             <div className="grid grid-3">
               {steps.map(([n, title, text], i) => (
                 <Reveal key={n} delay={i * 0.08} className="card">
-                  <p className="label">{n}</p>
+                  <span className="step-bubble">{n}</span>
                   <h3>{title}</h3>
                   <p>{text}</p>
                 </Reveal>
@@ -105,7 +105,7 @@ export default function Home() {
 
         <section className="section" id="privacy">
           <div className="wrap">
-            <SectionHead label="What stays dark" title="Honest about the limits." />
+            <SectionHead label="What stays secret" title="No smoke, no mirrors." />
             <div className="grid grid-2">
               <Reveal className="card">
                 <h3>Hidden from everyone</h3>
@@ -116,7 +116,7 @@ export default function Home() {
                 </ul>
               </Reveal>
               <Reveal delay={0.08} className="card card-muted">
-                <h3>Still visible</h3>
+                <h3>Still out in the open</h3>
                 <ul className="list list-visible">
                   {visible.map((item) => (
                     <li key={item}>{item}</li>
@@ -129,7 +129,7 @@ export default function Home() {
 
         <section className="section" id="sales">
           <div className="wrap">
-            <SectionHead label="Sale types" title="One engine. Four ways to raise." />
+            <SectionHead label="Sale types" title="One engine, four flavours." />
             <div className="grid grid-4">
               {saleTypes.map(([name, status, text], i) => (
                 <Reveal key={name} delay={i * 0.06} className="card">
@@ -144,18 +144,18 @@ export default function Home() {
 
         <section className="section" id="networks">
           <div className="wrap">
-            <SectionHead label="Networks" title="Two chains. Kept apart." />
+            <SectionHead label="Networks" title="Two chains, no drama." />
             <div className="grid grid-2">
               {networks.map(([name, text], i) => (
                 <Reveal key={name} delay={i * 0.08} className="card">
-                  <p className="label">Network 0{i + 1}</p>
+                  <p className="label">Network {i + 1}</p>
                   <h3 className="network-name">{name}</h3>
                   <p>{text}</p>
                 </Reveal>
               ))}
             </div>
             <Reveal as="p" className="section-note">
-              No bridge. A sale lives on one chain from the first ticket to the last claim.
+              No bridges. A sale stays on its chain from the first ticket to the last claim.
             </Reveal>
           </div>
         </section>
@@ -171,8 +171,7 @@ export default function Home() {
             </a>
           </div>
           <p className="footer-legal">
-            Darkbid is in development. Nothing on this site is an offer to sell tokens or securities, and availability will depend on
-            your country.
+            Darkbid is still being built. Nothing here is an offer to sell tokens or securities, and availability depends on where you live.
           </p>
         </div>
       </footer>

@@ -84,8 +84,8 @@ export default function HostPage() {
     <main className="page page-narrow">
       <div className="page-head">
         <p className="label">My projects</p>
-        <h1>Projects you host</h1>
-        <p className="lede">Projects registered by your connected wallets, with their review status and allowlist.</p>
+        <h1>Your projects</h1>
+        <p className="lede">Everything your connected wallets have registered, with review status and allowlist sign-ups.</p>
       </div>
 
       {addresses.length === 0 ? (

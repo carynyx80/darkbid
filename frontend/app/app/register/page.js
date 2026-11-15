@@ -160,7 +160,7 @@ export default function RegisterPage() {
       <main className="page page-narrow">
         <div className="done-panel">
           <p className="label">Project submitted</p>
-          <h1>{state.status === "approved" ? "You’re live on Darkbid." : "Submitted for review."}</h1>
+          <h1>{state.status === "approved" ? "You’re live! 🎉" : "Nice, you’re in the queue."}</h1>
           <p className="lede">
             {state.status === "approved"
               ? "Your project is listed on the launches page."
@@ -183,8 +183,8 @@ export default function RegisterPage() {
     <main className="page page-narrow">
       <div className="page-head">
         <p className="label">Host a launch</p>
-        <h1>Register your project</h1>
-        <p className="lede">Hosts are public: your project, links and host wallet are shown to everyone. Your investors stay invisible.</p>
+        <h1>Let’s get you launched</h1>
+        <p className="lede">You’re the star of the show: your project, links and host wallet are public. Your investors get to stay in the shadows.</p>
       </div>
 
       <form className="form" onSubmit={onSubmit} noValidate>

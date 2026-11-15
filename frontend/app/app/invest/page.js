@@ -20,7 +20,7 @@ export default function InvestPage() {
       <div className="page-head">
         <p className="label">Invest</p>
         <h1>Invest without a trace.</h1>
-        <p className="lede">Investors never register on Darkbid. Your identity is a secret only you hold, and nothing on the chain ties your purchase to your tokens.</p>
+        <p className="lede">There’s nothing to sign up for. Your identity is a secret only you hold, and nothing on the chain ties what you paid to what you got.</p>
       </div>
 
       <section className="card-plain">

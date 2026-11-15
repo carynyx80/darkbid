@@ -67,9 +67,9 @@ export default function LaunchesPage() {
     <main className="page">
       <section className="launch-hero">
         <div>
-          <p className="label">Private launchpad / Robinhood Chain / Solana</p>
-          <h1>Launches</h1>
-          <p className="lede">Hosts launch in public. Investors stay invisible: nobody can link a buyer to their tokens.</p>
+          <p className="label">Private launchpad · Robinhood Chain · Solana</p>
+          <h1>What’s launching</h1>
+          <p className="lede">Projects launch out loud. Investors stay incognito.</p>
           <p className="follow-note">
             Follow new launches anonymously with the <a href="/feed.xml">launch feed (RSS)</a>, or star a launch to watch it on this device.
           </p>
@@ -77,15 +77,15 @@ export default function LaunchesPage() {
         <div className="roles">
           <Link className="role-card" href="/app/invest">
             <span className="role-kicker">I’m investing</span>
-            <span className="role-title">Stay invisible</span>
-            <span className="role-text">Create a private identity. No account, no email, nothing that points back to you.</span>
+            <span className="role-title">Go incognito</span>
+            <span className="role-text">Make a secret identity in two seconds. No account, no email, nothing that points back to you.</span>
             <span className="role-cta">Start investing →</span>
           </Link>
           <Link className="role-card role-card-solid" href="/app/register">
             <span className="role-kicker">I’m launching</span>
-            <span className="role-title">Register a project</span>
-            <span className="role-text">List your presale, ICO, IDO or IPO with your logo, links and launch date.</span>
-            <span className="role-cta">Register project →</span>
+            <span className="role-title">Show off your project</span>
+            <span className="role-text">List your presale, ICO, IDO or IPO with your logo, links and a launch date.</span>
+            <span className="role-cta">Register a project →</span>
           </Link>
         </div>
       </section>
@@ -95,7 +95,7 @@ export default function LaunchesPage() {
         <Segmented label="Type" options={[["all", "All types"], ...LAUNCH_TYPES.map(([id, name]) => [id, name])]} value={type} onChange={setType} />
         <Segmented label="Status" options={PHASE_FILTERS} value={phase} onChange={setPhase} />
         <button className={`watch-filter ${watchingOnly ? "is-active" : ""}`} aria-pressed={watchingOnly} onClick={() => setWatchingOnly((w) => !w)}>
-          ★ Watching ({watch.ids.length})
+          ★ Watching ({(projects || []).filter((p) => watch.ids.includes(p.id)).length})
         </button>
       </section>
 
@@ -112,10 +112,10 @@ export default function LaunchesPage() {
         </div>
       ) : shown.length === 0 ? (
         <div className="empty">
-          <h3>{projects.length === 0 ? "No launches yet" : watchingOnly && watch.ids.length === 0 ? "You’re not watching anything yet" : "Nothing matches these filters"}</h3>
+          <h3>{projects.length === 0 ? "It’s quiet in here…" : watchingOnly && watch.ids.length === 0 ? "Nothing starred yet" : "Nothing matches those filters"}</h3>
           <p>
             {projects.length === 0
-              ? "Be the first: register your project and it appears here once reviewed."
+              ? "No launches yet. Be the first: register your project and it pops up here once it’s been reviewed."
               : watchingOnly && watch.ids.length === 0
                 ? "Tap the star on a launch to keep track of it. Your watchlist stays on this device and is never sent anywhere."
                 : "Try a different network, type or status."}

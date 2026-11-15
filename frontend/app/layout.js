@@ -1,7 +1,7 @@
-import { Chakra_Petch, Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const display = Chakra_Petch({ subsets: ["latin"], weight: ["600", "700"], style: ["italic"], variable: "--font-display" });
+const display = Bricolage_Grotesque({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-display" });
 const body = Geist({ subsets: ["latin"], variable: "--font-body" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
