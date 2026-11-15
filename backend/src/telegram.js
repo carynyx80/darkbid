@@ -117,18 +117,22 @@ function createTelegram(store) {
     // Linking: the admin opens the bot and sends /start.
     const msg = update.message;
     if (msg && typeof msg.text === "string") {
+      // Accept "/start", "／start" (full-width slash, common on phone keyboards) and plain "start".
+      msg.text = msg.text.trim().replace(/^[／⁄∕]/, "/").replace(/^(start|pending)\b/i, "/$1").replace(/^\/(\w+)/, (_, c) => "/" + c.toLowerCase());
       const from = msg.from || {};
       const isAdminName = (from.username || "").toLowerCase() === adminUsername;
       const linkedUser = await store.getSetting("telegram_admin_user_id");
       const isAdmin = linkedUser ? String(from.id) === linkedUser : isAdminName;
       if (msg.chat.type !== "private") return;
       if (!isAdmin) {
+        console.log(`telegram: ignored a message from @${from.username || "unknown"} (not the admin)`);
         await call("sendMessage", { chat_id: msg.chat.id, text: "This bot is private to the Darkbid team." });
         return;
       }
       if (msg.text.startsWith("/start")) {
         await store.setSetting("telegram_admin_user_id", String(from.id));
         await store.setSetting("telegram_admin_chat_id", String(msg.chat.id));
+        console.log(`telegram: admin @${from.username || from.id} linked`);
         await call("sendMessage", {
           chat_id: msg.chat.id,
           text: "Linked ✅ New project requests will arrive here with Approve and Reject buttons.\n\nSend /pending to see anything waiting for review.",
