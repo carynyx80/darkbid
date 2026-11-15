@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const { Pool } = require("pg");
+const { createRelayRouter } = require("./relayer");
 
 const PORT = process.env.PORT || 4000;
 const isProd = process.env.NODE_ENV === "production";
@@ -54,7 +55,7 @@ const originAllowed = (origin) => {
   });
 };
 app.use(cors({ origin: (origin, cb) => cb(null, originAllowed(origin)), methods: ["GET", "POST"] }));
-app.use(express.json({ limit: "2kb" }));
+app.use(express.json({ limit: "8kb" }));
 
 app.get("/", (_req, res) => res.json({ name: "darkbid-api", ok: true }));
 
@@ -84,6 +85,8 @@ app.post("/waitlist", waitlistLimiter, async (req, res) => {
     res.status(500).json({ ok: false, error: "Something went wrong. Try again." });
   }
 });
+
+app.use("/relay", createRelayRouter());
 
 app.use((_req, res) => res.status(404).json({ ok: false, error: "Not found" }));
 app.use((err, _req, res, _next) => {

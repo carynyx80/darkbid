@@ -7,3 +7,7 @@ out/
 .DS_Store
 *.log
 .vercel
+
+.claude/
+frontend/public/sale.local.json
+protocol/deployments/31337.json

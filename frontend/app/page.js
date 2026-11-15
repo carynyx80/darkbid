@@ -47,9 +47,14 @@ export default function Home() {
             <a href="#sales">Sale types</a>
             <a href="#networks">Networks</a>
           </nav>
-          <a className="button-outline" href="#waitlist">
-            Join waitlist
-          </a>
+          <div className="nav-actions">
+            <a className="nav-app" href="/app">
+              Launch app
+            </a>
+            <a className="button-outline" href="#waitlist">
+              Join waitlist
+            </a>
+          </div>
         </div>
       </header>
 
