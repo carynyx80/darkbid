@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 160">
+  <!-- Angular DB in pale gold on black: a hollow "dark" D beside a solid "bid" B -->
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F3E7C0"/>
+      <stop offset="1" stop-color="#CDB67E"/>
+    </linearGradient>
+    <path id="d" d="
+      M20 20 H80 L110 50 V110 L80 140 H20 Z
+      M48 48 V112 H70 L82 100 V60 L70 48 Z"/>
+    <path id="b" fill-rule="evenodd" d="
+      M126 20 H190 L212 42 V66 L198 80 L212 94 V118 L190 140 H126 Z
+      M154 46 V68 H180 L186 62 V52 L180 46 Z
+      M154 92 V114 H180 L186 108 V98 L180 92 Z"/>
+  </defs>
+  <rect width="250" height="160" fill="#060606"/>
+  <g transform="translate(26 0) skewX(-10)">
+    <use href="#d" fill="none" stroke="#E6D5A4" stroke-width="4" stroke-linejoin="miter"/>
+    <use href="#b" fill="url(#gold)"/>
+  </g>
+</svg>
