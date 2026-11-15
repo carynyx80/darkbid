@@ -1,13 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { logoSrc } from "../../lib/api";
+import WatchButton from "./WatchButton";
 import { NETWORK_NAMES, TYPE_NAMES, phaseLabel, phaseOf, shortAddress } from "../../lib/format";
 
 export function ProjectLogo({ project, size = 56 }) {
+  const [broken, setBroken] = useState(false);
+  if (broken) {
+    return (
+      <span className="project-logo project-logo-fallback" style={{ width: size, height: size, fontSize: size * 0.34 }} aria-label={`${project.name} logo`}>
+        {project.ticker.slice(0, 3)}
+      </span>
+    );
+  }
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img className="project-logo" src={logoSrc(project)} alt={`${project.name} logo`} width={size} height={size} loading="lazy" />
+    <img
+      className="project-logo"
+      src={logoSrc(project)}
+      alt={`${project.name} logo`}
+      width={size}
+      height={size}
+      loading="lazy"
+      onError={() => setBroken(true)}
+    />
   );
 }
 
@@ -34,6 +52,7 @@ export default function ProjectCard({ project, now }) {
           <p className="label">${project.ticker}</p>
         </div>
         <span className={`phase phase-${phase}`}>{phase === "live" ? "Live" : phase === "upcoming" ? "Upcoming" : "Ended"}</span>
+        <WatchButton id={project.id} />
       </div>
       <p className="project-card-tagline">{project.tagline}</p>
       <Chips project={project} />

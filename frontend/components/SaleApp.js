@@ -255,10 +255,10 @@ export default function SaleApp({ networkSwitch }) {
           <p className="label">Darkbid app</p>
           <h1 className="app-title">No Robinhood Chain sale is live yet.</h1>
           <p className="lede">
-            This is where you will buy tickets and claim tokens once the first private sale opens. Join the waitlist to hear when it does.
+            This is where you will buy tickets and claim tokens once the first private sale opens.
           </p>
-          <a className="button-solid" href="/#waitlist">
-            Join waitlist
+          <a className="button-solid" href="/app">
+            Browse launches
           </a>
         </main>
       </>

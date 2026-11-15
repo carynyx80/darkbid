@@ -1,4 +1,4 @@
-// Storage for the waitlist, registered projects and anonymous allowlist codes.
+// Storage for registered projects and anonymous allowlist codes.
 // Postgres in production; an in-memory store for local development only.
 const { Pool } = require("pg");
 
@@ -31,11 +31,6 @@ function createPostgresStore(url) {
   return {
     kind: "postgres",
     async init() {
-      await pool.query(`CREATE TABLE IF NOT EXISTS waitlist (
-        id BIGSERIAL PRIMARY KEY,
-        email TEXT NOT NULL UNIQUE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-      )`);
       await pool.query(`CREATE TABLE IF NOT EXISTS projects (
         id TEXT PRIMARY KEY,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -69,7 +64,6 @@ function createPostgresStore(url) {
       )`);
     },
     ping: () => pool.query("SELECT 1"),
-    addWaitlist: (email) => pool.query("INSERT INTO waitlist (email) VALUES ($1) ON CONFLICT (email) DO NOTHING", [email]),
 
     async createProject(p) {
       await pool.query(
@@ -124,7 +118,6 @@ function createPostgresStore(url) {
 }
 
 function createMemoryStore() {
-  const emails = new Set();
   const projects = new Map();
   const codes = new Map();
   const publicRow = (p) => {
@@ -137,7 +130,6 @@ function createMemoryStore() {
     kind: "memory",
     init: async () => console.warn("No DATABASE_URL set: using in-memory storage (development only)"),
     ping: async () => {},
-    addWaitlist: async (e) => emails.add(e),
     createProject: async (p) => projects.set(p.id, { ...p, created_at: new Date().toISOString() }),
     listProjects: async ({ status, owner }) =>
       [...projects.values()]

@@ -1,7 +1,7 @@
-// Darkbid API: waitlist, project registry, anonymous allowlist codes and claim relayers.
+// Darkbid API: project registry, anonymous allowlist codes and claim relayers.
+// It never collects investor emails or accounts.
 const express = require("express");
 const cors = require("cors");
-const rateLimit = require("express-rate-limit");
 const { createStore } = require("./db");
 const { createProjectsRouter } = require("./projects");
 const { createRelayRouter } = require("./relayer");
@@ -56,24 +56,6 @@ app.get("/health", async (_req, res) => {
     res.json({ ok: true, storage: store.kind });
   } catch {
     res.status(503).json({ ok: false });
-  }
-});
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const waitlistLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false });
-
-app.post("/waitlist", waitlistLimiter, async (req, res) => {
-  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
-  if (!EMAIL.test(email) || email.length > 254) {
-    return res.status(400).json({ ok: false, error: "Enter a valid email address." });
-  }
-  try {
-    await store.addWaitlist(email);
-    // Same answer whether or not the address was already on the list.
-    res.json({ ok: true });
-  } catch (err) {
-    console.error("waitlist insert failed:", err.message);
-    res.status(500).json({ ok: false, error: "Something went wrong. Try again." });
   }
 });
 

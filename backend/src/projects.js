@@ -135,6 +135,44 @@ function publicProject(row) {
   };
 }
 
+const xml = (v) =>
+  String(v ?? "").replace(/[<>&'"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[c]);
+const NETWORK_LABEL = { robinhood: "Robinhood Chain", solana: "Solana" };
+const TYPE_LABEL = { presale: "Presale", ico: "ICO", ido: "IDO", ipo: "IPO" };
+
+// RSS 2.0 feed of approved launches. Readers fetch it anonymously; nobody subscribes to anything.
+function renderFeed(rows, site) {
+  const items = rows
+    .slice()
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 50)
+    .map((r) => {
+      const link = `${site}/app/project?id=${encodeURIComponent(r.id)}`;
+      const starts = new Date(r.launch_at).toUTCString();
+      return [
+        "    <item>",
+        `      <title>${xml(`${r.name} ($${r.ticker}) · ${TYPE_LABEL[r.launch_type]} on ${NETWORK_LABEL[r.owner_network]}`)}</title>`,
+        `      <link>${xml(link)}</link>`,
+        `      <guid isPermaLink="false">darkbid-${xml(r.id)}</guid>`,
+        `      <pubDate>${new Date(r.created_at).toUTCString()}</pubDate>`,
+        `      <description>${xml(`${r.tagline}${/[.!?]$/.test(r.tagline) ? "" : "."} Starts ${starts}.`)}</description>`,
+        "    </item>",
+      ].join("\n");
+    });
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<rss version="2.0">',
+    "  <channel>",
+    "    <title>Darkbid launches</title>",
+    `    <link>${xml(site)}/app</link>`,
+    "    <description>New private token launches on Robinhood Chain and Solana.</description>",
+    ...items,
+    "  </channel>",
+    "</rss>",
+    "",
+  ].join("\n");
+}
+
 function createProjectsRouter(store) {
   const router = express.Router();
   const autoApprove = process.env.AUTO_APPROVE_PROJECTS === "true";
@@ -142,6 +180,15 @@ function createProjectsRouter(store) {
 
   const registerLimiter = rateLimit({ windowMs: 60 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false });
   const allowlistLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: true, legacyHeaders: false });
+
+  const site = (process.env.PUBLIC_SITE_URL || "https://darkbid-xi.vercel.app").replace(/\/$/, "");
+
+  router.get("/feed.xml", async (_req, res) => {
+    const rows = await store.listProjects({ status: "approved" });
+    res.set("Content-Type", "application/rss+xml; charset=utf-8");
+    res.set("Cache-Control", "public, max-age=300");
+    res.send(renderFeed(rows, site));
+  });
 
   // List approved projects, or a host's own projects (any status) with ?owner=.
   router.get("/", async (req, res) => {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import IdentityPanel from "../../../components/app/IdentityPanel";
+import WatchButton from "../../../components/app/WatchButton";
 import { Chips, ProjectLogo } from "../../../components/app/ProjectCard";
 import useNow from "../../../components/app/useNow";
 import { getProject, submitAllowlistCode } from "../../../lib/api";
@@ -127,6 +128,10 @@ function ProjectView() {
           <h1>{project.name}</h1>
           <p className="lede">{project.tagline}</p>
           <Chips project={project} />
+          <div className="row">
+            <WatchButton id={project.id} withLabel />
+            <span className="form-hint">Watching is saved only on this device.</span>
+          </div>
           {links.length > 0 && (
             <div className="links">
               {links.map(([name, href]) => (

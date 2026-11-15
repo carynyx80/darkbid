@@ -5,7 +5,7 @@ Private token sales on Robinhood Chain and Solana.
 | Folder | What it is | Deployed to |
 |---|---|---|
 | `frontend/` | Marketing site and the app: launches, project registration, investing, buy and claim (Next.js) | Vercel |
-| `backend/` | API: waitlist, project registry, allowlist codes, claim relayers (Express + Postgres) | Railway |
+| `backend/` | API: project registry, allowlist codes, claim relayers (Express + Postgres) | Railway |
 | `protocol/` | Robinhood Chain presale contracts and the shared zero-knowledge circuits (Hardhat, circom) | not deployed |
 | `solana/` | Solana presale program using the same circuits (Anchor) | not deployed |
 | `brand/` | Logo files | |

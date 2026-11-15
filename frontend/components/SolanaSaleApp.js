@@ -268,8 +268,8 @@ export default function SolanaSaleApp({ networkSwitch }) {
           <p className="label">Darkbid app / Solana</p>
           <h1 className="app-title">No Solana sale is live yet.</h1>
           <p className="lede">This is where you will buy tickets and claim tokens on Solana once the first private sale opens.</p>
-          <a className="button-solid" href="/#waitlist">
-            Join waitlist
+          <a className="button-solid" href="/app">
+            Browse launches
           </a>
         </main>
       </>

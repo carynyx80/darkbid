@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import ProjectCard from "../../components/app/ProjectCard";
 import useNow from "../../components/app/useNow";
 import { listProjects } from "../../lib/api";
+import { useWatchlist } from "../../lib/watchlist";
 import { LAUNCH_TYPES, phaseOf } from "../../lib/format";
 
 const NETWORK_FILTERS = [
@@ -40,6 +41,8 @@ export default function LaunchesPage() {
   const [network, setNetwork] = useState("all");
   const [type, setType] = useState("all");
   const [phase, setPhase] = useState("all");
+  const [watchingOnly, setWatchingOnly] = useState(false);
+  const watch = useWatchlist();
 
   useEffect(() => {
     listProjects().then(setProjects).catch((e) => {
@@ -51,9 +54,13 @@ export default function LaunchesPage() {
   const shown = useMemo(
     () =>
       (projects || []).filter(
-        (p) => (network === "all" || p.network === network) && (type === "all" || p.launchType === type) && (phase === "all" || phaseOf(p, now) === phase)
+        (p) =>
+          (network === "all" || p.network === network) &&
+          (type === "all" || p.launchType === type) &&
+          (phase === "all" || phaseOf(p, now) === phase) &&
+          (!watchingOnly || watch.ids.includes(p.id))
       ),
-    [projects, network, type, phase, now]
+    [projects, network, type, phase, now, watchingOnly, watch.ids]
   );
 
   return (
@@ -63,6 +70,9 @@ export default function LaunchesPage() {
           <p className="label">Private launchpad / Robinhood Chain / Solana</p>
           <h1>Launches</h1>
           <p className="lede">Hosts launch in public. Investors stay invisible: nobody can link a buyer to their tokens.</p>
+          <p className="follow-note">
+            Follow new launches anonymously with the <a href="/feed.xml">launch feed (RSS)</a>, or star a launch to watch it on this device.
+          </p>
         </div>
         <div className="roles">
           <Link className="role-card" href="/app/invest">
@@ -84,6 +94,9 @@ export default function LaunchesPage() {
         <Segmented label="Network" options={NETWORK_FILTERS} value={network} onChange={setNetwork} />
         <Segmented label="Type" options={[["all", "All types"], ...LAUNCH_TYPES.map(([id, name]) => [id, name])]} value={type} onChange={setType} />
         <Segmented label="Status" options={PHASE_FILTERS} value={phase} onChange={setPhase} />
+        <button className={`watch-filter ${watchingOnly ? "is-active" : ""}`} aria-pressed={watchingOnly} onClick={() => setWatchingOnly((w) => !w)}>
+          ★ Watching ({watch.ids.length})
+        </button>
       </section>
 
       {projects === null ? (
@@ -99,8 +112,14 @@ export default function LaunchesPage() {
         </div>
       ) : shown.length === 0 ? (
         <div className="empty">
-          <h3>{projects.length === 0 ? "No launches yet" : "Nothing matches these filters"}</h3>
-          <p>{projects.length === 0 ? "Be the first: register your project and it appears here once reviewed." : "Try a different network, type or status."}</p>
+          <h3>{projects.length === 0 ? "No launches yet" : watchingOnly && watch.ids.length === 0 ? "You’re not watching anything yet" : "Nothing matches these filters"}</h3>
+          <p>
+            {projects.length === 0
+              ? "Be the first: register your project and it appears here once reviewed."
+              : watchingOnly && watch.ids.length === 0
+                ? "Tap the star on a launch to keep track of it. Your watchlist stays on this device and is never sent anywhere."
+                : "Try a different network, type or status."}
+          </p>
           {projects.length === 0 && (
             <Link className="button-solid" href="/app/register">
               Register a project

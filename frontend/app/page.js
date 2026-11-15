@@ -1,6 +1,5 @@
 import Logo from "../components/Logo";
 import Reveal from "../components/Reveal";
-import WaitlistForm from "../components/WaitlistForm";
 
 const steps = [
   ["01", "Buy a ticket", "Prove you’re on the allowlist without saying who you are, then pay for identical tickets. Every ticket costs the same, so amounts say nothing."],
@@ -51,18 +50,15 @@ export default function Home() {
             <a className="nav-app" href="/app/register">
               Host a launch
             </a>
-            <a className="nav-app" href="/app">
+            <a className="button-outline" href="/app">
               Launch app
-            </a>
-            <a className="button-outline" href="#waitlist">
-              Join waitlist
             </a>
           </div>
         </div>
       </header>
 
       <main id="top">
-        <section className="opening" id="waitlist">
+        <section className="opening">
           <div className="wrap opening-inner">
             <div className="opening-text">
               <Reveal as="p" className="label">
@@ -74,8 +70,16 @@ export default function Home() {
               <Reveal as="p" delay={0.16} className="lede">
                 Darkbid runs token sales where nobody can link a buyer to their tokens. Not the public, not the issuer, not us.
               </Reveal>
-              <Reveal delay={0.24}>
-                <WaitlistForm />
+              <Reveal delay={0.24} className="hero-ctas">
+                <a className="button-solid" href="/app">
+                  Browse launches
+                </a>
+                <a className="button-ghost hero-ghost" href="/app/register">
+                  Host a launch
+                </a>
+              </Reveal>
+              <Reveal as="p" delay={0.3} className="hero-note">
+                No sign-up, no email. Investors never give Darkbid anything.
               </Reveal>
             </div>
             <Reveal delay={0.2} className="opening-mark">
@@ -162,6 +166,9 @@ export default function Home() {
           <div className="footer-brand">
             <Logo width={62} />
             <p className="label label-muted">© 2026 Darkbid</p>
+            <a className="footer-link" href="/feed.xml">
+              Launch feed (RSS)
+            </a>
           </div>
           <p className="footer-legal">
             Darkbid is in development. Nothing on this site is an offer to sell tokens or securities, and availability will depend on
