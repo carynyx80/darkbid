@@ -2450,3 +2450,38 @@ h3 {
 .details dt {
   color: var(--pop);
 }
+
+/* ---------- $DARK contract address at the very bottom */
+.footer-ca {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.footer-ca-label {
+  color: var(--pop);
+  font-weight: 700;
+}
+.footer-ca-value {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  color: var(--gold);
+  word-break: break-all;
+  user-select: all;
+}
+.footer-ca-copy {
+  border: 1px solid var(--gold-deep);
+  background: transparent;
+  color: var(--gold);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.footer-ca-copy:hover {
+  border-color: var(--pop);
+  color: var(--pop);
+}

@@ -1,5 +1,6 @@
 import Logo from "../components/Logo";
 import Reveal from "../components/Reveal";
+import ContractAddress from "../components/ContractAddress";
 
 const steps = [
   ["1", "Grab a ticket", "Prove you’re on the list without saying who you are. Every ticket costs the same, so the amount gives nothing away."],
@@ -174,6 +175,7 @@ export default function Home() {
             Darkbid is still being built. Nothing here is an offer to sell tokens or securities, and availability depends on where you live.
           </p>
         </div>
+        <ContractAddress />
       </footer>
     </>
   );
